@@ -1,21 +1,34 @@
-name: ci-develop-wf 
+name: ci-develop-wf
+
 on:
- pull_request:
-   branches:
-     - develop
-   types:
-     - opened
-     - synchronize
-   push:
+  pull_request:
     branches:
       - develop
+    types:
+      - opened
+      - synchronize
+  push:
+    branches:
+      - develop
+
 jobs:
   ci-develop-jobs:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Repository on runner
         uses: actions/checkout@v4
-      - name: Using HTML hint to lint files
-        run:  npx htmlhint "**/*.html"
-      - name: Using Style lint to lint css files
-        run:  npx Stylelint "**/*.css"   
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Using HTMLHint to lint HTML files
+        run: npx htmlhint "**/*.html" --config .htmlhintrc.json
+
+      - name: Using Stylelint to lint CSS files
+        run: npx stylelint "**/*.css" --config .stylelintrc.json
